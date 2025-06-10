@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSO - JRM Customer Route Map</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Language toggle styles */
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .hindi-text {
+            display: none;
+        }
+        .language-hindi .hindi-text {
+            display: inline;
+        }
+        .language-hindi .english-text {
+            display: none;
+        }
+        /* Ensure dropdowns remain unchanged */
+        .form-select, .form-select option {
+            color: inherit !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Language Toggle Button -->
+        <div class="language-toggle p-2">
+            <button id="languageToggle" class="btn btn-sm btn-outline-primary custom-btn">
+                <span class="english-text">🌐 हिंदी</span>
+                <span class="hindi-text">🌐 English</span>
+            </button>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px;">भारतीय तेल</div>
+                                <div style="font-size: 12px; margin-top: 2px;">IndianOil</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 text-primary">IndianOil Corporation</h4>
+                            <p class="mb-0 text-muted">
+                                <span class="english-text">Journey Risk Management System</span>
+                                <span class="hindi-text">यात्रा जोखिम प्रबंधन प्रणाली</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h2 class="text-primary mb-0">RSO - JRM</h2>
+                    <h5 class="text-muted">
+                        <span class="english-text">Customer Route Map</span>
+                        <span class="hindi-text">ग्राहक मार्ग मानचित्र</span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Selection Container -->
+            <div class="selection-container">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="terminalSelect" class="form-label fw-bold">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <span class="english-text">Select Terminal</span>
+                            <span class="hindi-text">टर्मिनल चुनें</span>
+                        </label>
+                        <select class="form-select" id="terminalSelect">
+                            <option value="">Select Terminal...</option>
+                            <option value="jaipur" selected>Jaipur Terminal</option>
+                            <option value="delhi">Delhi Terminal</option>
+                            <option value="mumbai">Mumbai Terminal</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="destinationSelect" class="form-label fw-bold">
+                            <i class="fas fa-flag-checkered text-success me-2"></i>
+                            <span class="english-text">Select Destination</span>
+                            <span class="hindi-text">गंतव्य चुनें</span>
+                        </label>
+                        <select class="form-select" id="destinationSelect">
+                            <option value="">Select Destination...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-modern mb-2 me-2" onclick="showDestination()">
+                            <i class="fas fa-eye me-2"></i>
+                            <span class="english-text">View Destination</span>
+                            <span class="hindi-text">गंतव्य देखें</span>
+                        </button>
+                        <button class="btn btn-modern" onclick="clearViewer()">
+                            <i class="fas fa-times me-2"></i>
+                            <span class="english-text">Clear View</span>
+                            <span class="hindi-text">साफ़ करें</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Route Breadcrumb -->
+            <div id="routeBreadcrumb" class="route-breadcrumb" style="display: none;">
+                <div class="d-flex align-items-center justify-content-center">
+                    <span id="startPoint" class="fw-bold text-primary">-</span>
+                    <i class="fas fa-arrow-right route-arrow"></i>
+                    <span id="endPoint" class="fw-bold text-success">-</span>
+                </div>
+            </div>
+
+            <!-- Stats Container -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStations">0</div>
+                    <div>
+                        <span class="english-text">Total Stations</span>
+                        <span class="hindi-text">कुल स्टेशन</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="selectedRoute">-</div>
+                    <div>
+                        <span class="english-text">Selected Route</span>
+                        <span class="hindi-text">चयनित मार्ग</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="destinationStatus">-</div>
+                    <div>
+                        <span class="english-text">Status</span>
+                        <span class="hindi-text">स्थिति</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="riskLevel">-</div>
+                    <div>
+                        <span class="english-text">Risk Level</span>
+                        <span class="hindi-text">जोखिम स्तर</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destination Viewer Container -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="info-panel mb-3">
+                        <h5 class="text-primary mb-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span class="english-text">Destination Information</span>
+                            <span class="hindi-text">गंतव्य जानकारी</span>
+                        </h5>
+                        <p class="mb-0">
+                            <span class="english-text">Select a terminal and destination to view detailed information about the station.</span>
+                            <span class="hindi-text">स्टेशन के बारे में विस्तृत जानकारी देखने के लिए एक टर्मिनल और गंतव्य चुनें।</span>
+                        </p>
+                    </div>
+                    
+                    <div class="text-end my-3">
+                        <button class="btn btn-outline-primary" onclick="toggleLegends()">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span class="english-text">See More Details</span>
+                            <span class="hindi-text">अधिक जानकारी देखें</span>
+                        </button>
+                    </div>
+
+                    <!-- Key Legends Section -->
+                    <div id="keyLegends" class="key-legends-section mt-4 p-3 bg-light rounded shadow-sm" style="display: none;">
+                        <h5 class="fw-bold mb-3">
+                            <span class="english-text">Key Legends On Route</span>
+                            <span class="hindi-text">मार्ग पर प्रमुख चिह्न</span>
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>📍 <strong class="english-text">Start Point</strong><strong class="hindi-text">प्रारंभ बिंदु</strong></span><br>
+                                    <small class="text-muted">प्रारंभ बिंदु</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>⛽ <strong class="english-text">Petrol Pump</strong><strong class="hindi-text">पेट्रोल पंप</strong></span><br>
+                                    <small class="text-muted">पेट्रोल पंप</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🏥 <strong class="english-text">Hospital</strong><strong class="hindi-text">अस्पताल</strong></span><br>
+                                    <small class="text-muted">अस्पताल</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>⚠️ <strong class="english-text">High Risk Turn</strong><strong class="hindi-text">उच्च जोखिम वाला मोड़</strong></span><br>
+                                    <small class="text-muted">उच्च जोखिम वाला मोड़</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🛑 <strong class="english-text">Medium Risk Turn</strong><strong class="hindi-text">मध्यम जोखिम मोड़</strong></span><br>
+                                    <small class="text-muted">मध्यम जोखिम मोड़</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🛒 <strong class="english-text">Market Place</strong><strong class="hindi-text">बाज़ार स्थान</strong></span><br>
+                                    <small class="text-muted">बाज़ार स्थान</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>👮 <strong class="english-text">Police</strong><strong class="hindi-text">पुलिस</strong></span><br>
+                                    <small class="text-muted">पुलिस</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🏫 <strong class="english-text">School</strong><strong class="hindi-text">विद्यालय</strong></span><br>
+                                    <small class="text-muted">विद्यालय</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🎓 <strong class="english-text">College</strong><strong class="hindi-text">कॉलेज</strong></span><br>
+                                    <small class="text-muted">कॉलेज</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border p-2 rounded bg-white">
+                                    <span>🏁 <strong class="english-text">End Point</strong><strong class="hindi-text">अंत बिंदु</strong></span><br>
+                                    <small class="text-muted">अंत बिंदु</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="destinationViewer" class="destination-viewer">
+                        <div class="welcome-message">
+                            <div class="welcome-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <h4>
+                                <span class="english-text">Welcome to JRM Route Viewer</span>
+                                <span class="hindi-text">JRM मार्ग दर्शक में आपका स्वागत है</span>
+                            </h4>
+                            <p>
+                                <span class="english-text">Please select a terminal and destination to view detailed information</span>
+                                <span class="hindi-text">कृपया विस्तृत जानकारी देखने के लिए एक टर्मिनल और गंतव्य चुनें</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Language toggle functionality
+        document.getElementById('languageToggle').addEventListener('click', function() {
+            document.body.classList.toggle('language-hindi');
+            
+            // Update button text
+            const button = this;
+            if (document.body.classList.contains('language-hindi')) {
+                button.innerHTML = '<span class="english-text">English</span><span class="hindi-text">🌐 अंग्रेज़ी</span>';
+            } else {
+                button.innerHTML = '<span class="english-text">🌐 हिंदी</span><span class="hindi-text">Hindi</span>';
+            }
+        });
+
+        // // Existing functions from your script.js
+        // function showDestination() {
+        //     // Your existing implementation
+        // }
+
+        // function clearViewer() {
+        //     // Your existing implementation
+        //}
+
+        function toggleLegends() {
+            const legendsSection = document.getElementById('keyLegends');
+            if (legendsSection.style.display === 'none') {
+                legendsSection.style.display = 'block';
+            } else {
+                legendsSection.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
